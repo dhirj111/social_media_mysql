@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Social Media Post Sharing</title>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -67,109 +66,10 @@
     <!-- Posts will be dynamically loaded here -->
   </div>
 
-  <script>
-    function submitPost() {
-      const imageLink = document.getElementById('imageLink').value;
-      const imageCaption = document.getElementById('imageCaption').value;
-
-      axios.post('http://localhost:7000/postdetails', {
-        imageLink: imageLink,
-        imageCaption: imageCaption
-      })
-        .then(response => {
-          console.log('Post submitted successfully:', response.data);
-          // Refresh posts after successful submission
-          fetchPosts();
-          // Clear input fields
-          document.getElementById('imageLink').value = '';
-          document.getElementById('imageCaption').value = '';
-        })
-        .catch(error => {
-          console.error('Error submitting post:', error);
-          alert('Failed to submit post');
-        });
-    }
-
-    function fetchPosts() {
-      axios.get('http://localhost:7000/posts')
-        .then(response => {
-          displayPosts(response.data);
-        })
-        .catch(error => {
-          console.error('Error fetching posts:', error);
-        });
-    }
-
-    function displayPosts(posts) {
-      const postsContainer = document.getElementById('postsContainer');
-      postsContainer.innerHTML = ''; // Clear existing posts
-
-      posts.forEach(post => {
-        const postElement = document.createElement('div');
-        postElement.classList.add('post');
-        postElement.innerHTML = `
-                    <img src="${post.imageLink}" alt="${post.imageCaption}" style="max-width: 100%;">
-                    <p>${post.imageCaption}</p>
-                    <button onclick="toggleCommentSection(this, ${post.id})">Comment</button>
-                    <div class="comment-section" style="display: none;">
-                        <input type="text" id="commentInput${post.id}" placeholder="Your Comment">
-                        <button onclick="submitComment(this, ${post.id})">Submit Comment</button>
-                        <div class="comments">
-                            ${renderComments(post.comments || [])}
-                        </div>
-                    </div>
-                `;
-        postsContainer.appendChild(postElement);
-      });
-    }
-
-    // If the comment section is currently not visible (display: none), it will make it
-    // visible (display: block) Otherwise, it will hide the comment section
-    function toggleCommentSection(button, postId) {
-      const commentSection = button.nextElementSibling;
-      commentSection.style.display = commentSection.style.display === 'none' ? 'block' : 'none';
-      //next sibling of comment section is input field of comment and previous comments ,here we make its
-      //display tye none if block , and block if none
-    }
-
-    function submitComment(button, postId) {
-      const commentInput = document.getElementById(`commentInput${postId}`);
-      //we had  setted dynamic ids by using post ids, first we get access to field b
-      //then we get value in field below
-      const commentText = commentInput.value;
-      if (!commentText.trim()) {
-        alert('Comment cannot be empty');
-        return;
-      }
-
-      axios.post('http://localhost:7000/comments', {
-        postId: postId,
-        comment: commentText
-      })
-        .then(response => {
-          console.log('Comment submitted successfully:', response.data);
-          // Refresh posts to show new comment
-          fetchPosts();
-          // Clear input
-          commentInput.value = '';
-        })
-        .catch(error => {
-          console.error('Error submitting comment:', error);
-          alert('Failed to submit comment');
-        });
-    }
-
-    function renderComments(comments) {
-  let result = [];
-  for (let i = 0; i < comments.length; i++) {
-    result.push(`<div>Anonymous: ${comments[i].text}</div>`);
-  }
-  return result.join('');
-}
-
-    // Fetch posts on page load
-    fetchPosts();
-  </script>
+  <!-- Load script.js -->
+  <script src="/script.js"></script>
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>
 
 </html>
